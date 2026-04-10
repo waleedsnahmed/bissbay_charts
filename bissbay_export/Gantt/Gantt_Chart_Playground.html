@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Gantt Chart Playground - Bissbay Export</title>
+</head>
+<body>
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+</style>
+
+<!-- Resources -->
+<script src="../lib/5/index.js"></script>
+<script src="../lib/5/xy.js"></script>
+<script src="../lib/5/plugins/colorPicker.js"></script>
+<script src="../lib/5/gantt.js"></script>
+<script src="../lib/5/themes/Animated.js"></script>
+
+<!-- Chart code -->
+<script>
+am5.ready(function() {
+
+// Create root element
+// https://www.bissbay.com/docs/v5/getting-started/#Root_element
+const root = am5.Root.new("chartdiv");
+
+// Set themes
+// https://www.bissbay.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root)
+]);
+
+// Create Gantt chart
+// https://www.bissbay.com/docs/v5/charts/gantt/
+const gantt = root.container.children.push(am5gantt.Gantt.new(root, {}));
+
+// Check if we have user-saved data in local storage
+function loadGanttData() {
+  if (localStorage.getItem("am_gantt_data")) {
+    return JSON.parse(localStorage.getItem("am_gantt_data"));
+  }
+  return {};
+}
+
+function saveGanttData(gantt_data) {
+  localStorage.setItem("am_gantt_data", JSON.stringify(gantt_data));
+}
+
+function saveGanttMarkedDates() {
+  const gantt_data = loadGanttData();
+  gantt_data.markedDates = gantt.xAxisMinor.axisRanges.values.map((range) => {
+    return range.get("value");
+  });
+  saveGanttData(gantt_data);
+}
+
+var markedDates = [];
+const gantt_data = loadGanttData();
+
+if (gantt_data.categoryData) {
+  categoryData = gantt_data.categoryData;
+}
+if (gantt_data.seriesData) {
+  seriesData = gantt_data.seriesData;
+}
+if (gantt_data.markedDates) {
+  markedDates = gantt_data.markedDates;
+}
+
+// Set data
+gantt.yAxis.data.setAll(categoryData);
+gantt.series.data.setAll(seriesData);
+
+// Create axis ranges for marked dates
+am5.array.each(markedDates, (value) => {
+  gantt.markDate(value);
+});
+
+// Set up saving of data
+gantt.events.onDebounced("valueschanged", (ev) => {
+  gantt_data.categoryData = gantt.yAxis.data.values;
+  gantt_data.seriesData = gantt.series.data.values;
+  saveGanttData(gantt_data);
+}, 500);
+
+gantt.events.on("datemarked", (ev) => {
+  console.log("Date marked: " + ev.date + " (" + new Date(ev.date) + ") in " + ev.dataItem.get(name));
+  saveGanttMarkedDates();
+});
+
+gantt.events.on("dateunmarked", (ev) => {
+  console.log("Date unmarked: " + ev.date + " (" + new Date(ev.date) + ") in " + ev.dataItem.get(name));
+  saveGanttMarkedDates();
+});
+
+gantt.appear();
+
+}); // end am5.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
+</body>
+</html>

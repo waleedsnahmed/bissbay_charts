@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Editable Gantt Chart - Bissbay Export</title>
+</head>
+<body>
+<!-- Styles -->
+<style>
+#chartdiv {
+  width: 100%;
+  height: 500px;
+}
+</style>
+
+<!-- Resources -->
+<script src="../lib/5/index.js"></script>
+<script src="../lib/5/xy.js"></script>
+<script src="../lib/5/plugins/colorPicker.js"></script>
+<script src="../lib/5/gantt.js"></script>
+<script src="../lib/5/themes/Animated.js"></script>
+
+<!-- Chart code -->
+<script>
+am5.ready(function() {
+
+var root = am5.Root.new("chartdiv");
+
+// Set themes
+// https://www.bissbay.com/docs/v5/concepts/themes/
+root.setThemes([
+  am5themes_Animated.new(root)
+]);
+
+// Create Gantt chart
+// https://www.bissbay.com/docs/v5/charts/gantt/
+var gantt = root.container.children.push(am5gantt.Gantt.new(root, {}));
+gantt.get("colors").set("step", 3);
+gantt.editButton.set("visible", true);
+
+// Set category data
+// https://www.bissbay.com/docs/v5/charts/gantt/#Category_data
+gantt.yAxis.data.setAll([{
+  name: "Idea",
+  id: "gantt_0"
+}, {
+  name: "Kick-off",
+  id: "gantt_1"
+}, {
+  name: "Planning",
+  id: "gantt_2"
+}, {
+  name: "Development",
+  id: "gantt_3"
+}, {
+  name: "Testing",
+  id: "gantt_4"
+}, {
+  name: "Finalization",
+  id: "gantt_5"
+}, {
+  name: "Release",
+  id: "gantt_6"
+}]);
+
+// Set series data
+// https://www.bissbay.com/docs/v5/charts/gantt/#Series_data
+gantt.series.data.setAll([{
+  start: 1758142800000,
+  duration: 0,
+  progress: 1,
+  id: "gantt_0",
+  linkTo: ["gantt_1"]
+}, {
+  start: 1758142800000,
+  duration: 2,
+  progress: 1,
+  id: "gantt_1",
+  linkTo: ["gantt_2"]
+}, {
+  start: 1758488400000,
+  duration: 2,
+  progress: 0.2,
+  id: "gantt_2",
+  linkTo: ["gantt_3"]
+}, {
+  start: 1758661200000,
+  duration: 1,
+  progress: 0.8,
+  id: "gantt_3",
+  linkTo: ["gantt_4"]
+}, {
+  start: 1758747600000,
+  duration: 3,
+  progress: 0,
+  id: "gantt_4",
+  linkTo: ["gantt_5"]
+}, {
+  start: 1759179600000,
+  duration: 0,
+  progress: 0,
+  id: "gantt_5",
+  linkTo: ["gantt_6"]
+}, {
+  start: 1759179600000,
+  duration: 4,
+  progress: 0,
+  id: "gantt_6"
+}]);
+
+gantt.appear();
+
+}); // end am5.ready()
+</script>
+
+<!-- HTML -->
+<div id="chartdiv"></div>
+</body>
+</html>
